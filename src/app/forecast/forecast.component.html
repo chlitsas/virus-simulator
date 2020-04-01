@@ -1,0 +1,156 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Experiment Parameters (R0 = {{transmissibility * ((infectiousDays/2+1/2) * effectiveContacts) | number}})</mat-card-title>
+  </mat-card-content>
+  <div class="row">
+    <div class="col-sm-3">
+      <mat-card-content>
+        <span>Population: {{population | number}}</span><input matInput type="number" min="0" (keypress)="numberOnly($event)" [(ngModel)]="population">
+      </mat-card-content>
+      <mat-card-content>
+        <mat-slider min="10" max="100" step="1" thumbLabel="true" [(ngModel)]="initialInfections">
+        </mat-slider>
+        <br>
+        <mat-label>Initial infections {{initialInfections}}</mat-label>
+      </mat-card-content>
+    </div>
+    <div class="col-sm-3">
+      <mat-card-content>
+        <mat-slider min="1" max="20" step="1" thumbLabel="true" [(ngModel)]="effectiveContacts">
+        </mat-slider>
+        <br>
+        <mat-label>Average effective contacts {{effectiveContacts}}</mat-label>
+      </mat-card-content>
+      <mat-card-content>
+        <mat-slider min="0.0001" max="0.99" step="0.001" thumbLabel="true" [(ngModel)]="transmissibility">
+        </mat-slider>
+        <br>
+        <mat-label>Transmission probability {{100*transmissibility | number}}%</mat-label>
+      </mat-card-content>
+    </div>
+    <div class="col-sm-3">
+      <mat-card-content>
+        <mat-slider min="1" max="30" step="1" thumbLabel="true" [(ngModel)]="infectiousDays">
+        </mat-slider>
+        <br>
+        <mat-label>Infectious period (days) {{infectiousDays}}</mat-label>
+      </mat-card-content>
+      <mat-card-content>
+        <mat-slider min="0.0001" max="0.1" step="0.001" thumbLabel="true" [(ngModel)]="mortalityRate">
+        </mat-slider>
+        <br>
+        <mat-label>Mortality rate {{100*mortalityRate | number}}%</mat-label>
+      </mat-card-content>
+    </div>
+    <div class="col-sm-3">
+      <mat-card-content>
+        <mat-slider min="40" max="{{MAX_DAYS}}" step="1" thumbLabel="true" [(ngModel)]="simulationDays">
+        </mat-slider>
+        <br>
+        <mat-label>Simulation days {{simulationDays}}</mat-label>
+      </mat-card-content>
+    </div>
+  </div>
+  <mat-card-content>
+    <mat-card-title>Seasonal Parameters</mat-card-title>
+  </mat-card-content>
+
+ <a href="javascript:void(0)" (click)="addMeasures()">Add Social Measures</a> or 
+ <a href="javascript:void(0)" (click)="addSeasonalTransmissibility()">Add Seasonal Transmissibility</a>
+  <mat-card-content>
+    <div class="row" *ngFor="let measure of contactsLimitationMeasures; index as i">
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="1" max="{{MAX_DAYS}}" step="1" thumbLabel="true" [(ngModel)]="measure.startDay">
+          </mat-slider>
+          <br>
+          <mat-label>Measures taken at day {{measure.startDay}}</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="1" max="{{MAX_DAYS}}" step="1" thumbLabel="true" [(ngModel)]="measure.endDay">
+          </mat-slider>
+          <br>
+          <mat-label>Measures lifted at day {{measure.endDay}}</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="1" max="20" step="1" thumbLabel="true" [(ngModel)]="measure.maxContactsAllowed">
+          </mat-slider>
+          <br>
+          <mat-label>Max contacts allowed {{measure.maxContactsAllowed}}</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <button mat-button color="warn" (click)="removeMeasure(i)">Remove Measure</button>
+        </mat-card-content>
+      </div>
+    </div>
+
+    <div class="row" *ngFor="let item of seasonalityImpactOnTransmissibility; index as i">
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="1" max="{{MAX_DAYS}}" step="1" thumbLabel="true" [(ngModel)]="item.startDay">
+          </mat-slider>
+          <br>
+          <mat-label>Seasonality start day {{item.startDay}}</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="1" max="{{MAX_DAYS}}" step="1" thumbLabel="true" [(ngModel)]="item.endDay">
+          </mat-slider>
+          <br>
+          <mat-label>Seasonality end day {{item.endDay}}</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <mat-slider min="0.0001" max="0.99" step="0.001" thumbLabel="true" [(ngModel)]="item.transferVirusProbability">
+          </mat-slider>
+          <br>
+          <mat-label>Transfer virus probability {{100 * item.transferVirusProbability | number}}%</mat-label>
+        </mat-card-content>
+      </div>
+      <div class="col-sm-3">
+        <mat-card-content>
+          <button mat-button color="warn" (click)="removeSeasonalTransmissibility(i)">Remove Seasonality</button>
+        </mat-card-content>
+      </div>
+    </div>
+  </mat-card-content>
+<hr>
+  <mat-radio-group [(ngModel)]="algo" aria-label="Select an algorithm">
+    <mat-radio-button value="random_walk" matTooltip="This algorithm tries to emulate real life by by taking -randomized- educated guesses to create the data for each day. Daily infections and fatal cases are being created by getting random samples from appropriate normal distributions having parameters based on the user's input.">Random Walk</mat-radio-button>
+    <mat-radio-button value="exponential" matTooltip="This algorithm is based on the R0 value which is used as the factor for the daily growth of the infections and on the mortality rate which is used to simulate daily fatal cases.">R0 Exponential Simulation</mat-radio-button>
+  </mat-radio-group><br>
+       <button mat-raised-button color="primary" (click)="run()">Run experiment</button>
+</mat-card>
+<br>
+<mat-card>
+  <mat-card-content *ngIf="!data.length">
+    <h3 class="text-muted">Please run the simulator to see the results</h3>
+  </mat-card-content>
+  <mat-card-content *ngIf="data.length" [@inOutAnimation]>
+    <app-line-chart [data]="data" [title]="title"></app-line-chart>
+    <div class="row">
+      <div class="col-sm-4">
+        <h4>Total infections: {{totalInfected | number}}</h4>
+      </div>
+      <div class="col-sm-4">
+        <h4>Total deaths: {{totalDied | number}}</h4>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+<br>
+<mat-card>
+  <mat-card-content>
+    <i>
+    We tried to use as default parameters the ones matching to the case of COVID-19. Please note that the dynamics of the virus can dramatically change from country to country due to weather conditions (can affect transmissibility) and the habits of the population (can affect R0 based on the daily connections). As an example, according to a study <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2270306/" target="_blank">in Italy each person may have physical contact with more than 19 people per day, while in Germany a person has no more than 8</a>.
+  </i>
+  </mat-card-content>
+</mat-card>

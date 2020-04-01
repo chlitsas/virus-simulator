@@ -1,0 +1,43 @@
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis-title {
+    fill: none;
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.9px;
+}
+
+
+app-line-chart {
+    #chart {
+        height: 500px;
+        width: inherit;
+
+        .bar {
+            fill: steelblue;
+        }
+        
+        .bar:hover {
+            fill: brown;
+        }
+        
+        .axis--x path {
+            display: none;
+        }
+    }
+}

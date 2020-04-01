@@ -1,0 +1,19 @@
+<h1>The COVID-19 case</h1>
+<hr>
+<mat-card>
+  <p>By the end of 2019, the Coronavirus disease 2019 (COVID-19) first appeared in China. COVID-19 is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 which belongs to the family of SARS-CoV-2.</p>
+  <p>
+  	Our simulator uses as default values the one that (to our best knowledge) correspond to COVID-19.
+  	Bellow we give the reasoning behind the selection of these parameters.
+  </p>
+
+  <ul>
+    <mat-list-item> <b>Mortality rate:</b> For the estimation of this parameter, multiple sources where considered as there is no complete study on it. Our estimation for mortality rate is 1.7% of all population (and not just of confirmed cases).
+    This estimation is a result of considering: 1) extreme cases (Italy more than 5% fatality rate and Germany less than 1%), 2) the report of World's Health Organisation (WHO) where the mortality rate was calculated as 3.4% based on all confirmed cases
+<a href="https://www.who.int/dg/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---3-march-2020" target="_blank">[WHO report on COVID-19]</a> and 3). Note though that we tried to estimate the real mortality rate deaths divided by all cases (not just the confirmed ones). Because of this, we weighted more countries like Germany, where hospitals are easily accessible and available to almost everyone. 
+    </mat-list-item>
+    <mat-list-item> <b>Average effective contacts:</b> According to the paper <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2270306/" target="_blank">Social Contacts and Mixing Patterns Relevant to the Spread of Infectious Diseases</a> an average person has 13.4 contacts per day. With 70% of them lasting longer than 1 hour. Note also that there is a deviation based on the country, for example in Italy the average number of physical contacts per day is 19.77 while in Germany is just 7.95.</mat-list-item>
+    <mat-list-item> <b>Probability of infection:</b> This parameter was soleily determined based on experimental data since there is no sufficient evidence on the calculation of it. </mat-list-item>
+    <mat-list-item> <b>Infectious period:</b> As of today, there is no clear view on the period when a virus transmission is possible. Although, there are estimations (with insufficient data though) of the R0 value. Based on multiple R0 values </mat-list-item>
+  </ul>
+</mat-card>
